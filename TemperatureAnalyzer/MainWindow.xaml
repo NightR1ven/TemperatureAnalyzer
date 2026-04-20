@@ -1,0 +1,82 @@
+﻿<Window x:Class="TemperatureAnalyzer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        mc:Ignorable="d"
+        Title="Анализатор температурного поля камеры сгорания" Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8">
+            <Button Command="{Binding LoadCommand}" Content="Загрузить ISH.txt" Width="120" Margin="0,0,8,0"/>
+            <TextBlock Text="№ изделия:" VerticalAlignment="Center" Margin="8,0,4,0"/>
+            <TextBox Text="{Binding ProductNumber, UpdateSourceTrigger=PropertyChanged}" Width="100" Margin="0,0,8,0"/>
+            <TextBlock Text="ρ газа, кг/м³:" VerticalAlignment="Center" Margin="8,0,4,0"/>
+            <TextBox Text="{Binding GasDensity, UpdateSourceTrigger=PropertyChanged}" Width="60" Margin="0,0,8,0"/>
+            <TextBlock Text="L0:" VerticalAlignment="Center" Margin="8,0,4,0"/>
+            <TextBox Text="{Binding StoichiometricRatio, UpdateSourceTrigger=PropertyChanged}" Width="60" Margin="0,0,8,0"/>
+            <TextBlock Text="Номер точки:" VerticalAlignment="Center" Margin="8,0,4,0"/>
+            <TextBox Text="{Binding SelectedPointIndex, UpdateSourceTrigger=PropertyChanged}" Width="60" Margin="0,0,8,0"/>
+            <Button Command="{Binding CalculateCommand}" Content="Рассчитать" Width="90" Margin="0,0,8,0"/>
+            <Button Command="{Binding ExportCommand}" Content="Экспорт в Excel" Width="120" Margin="0,0,8,0"/>
+            <Button Command="{Binding PrintCommand}" Content="Печать отчёта" Width="110"/>
+        </StackPanel>
+
+        <StatusBar Grid.Row="1" Margin="0,0,0,8">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusText}" FontStyle="Italic"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <DataGrid Grid.Row="2" ItemsSource="{Binding ThermalResult.PoyasData}" AutoGenerateColumns="False"
+                  CanUserAddRows="False" IsReadOnly="True" Margin="0,0,0,8">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Пояс" Binding="{Binding Index}" Width="50"/>
+                <DataGridTextColumn Header="t₄maxi,°C" Binding="{Binding t4maxi, StringFormat=N2}" Width="80"/>
+                <DataGridTextColumn Header="t₄mini,°C" Binding="{Binding t4mini, StringFormat=N2}" Width="80"/>
+                <DataGridTextColumn Header="t₄cpi,°C" Binding="{Binding t4cpi, StringFormat=N2}" Width="80"/>
+                <DataGridTextColumn Header="Δt₄maxi,°C" Binding="{Binding dt4maxi, StringFormat=N2}" Width="85"/>
+                <DataGridTextColumn Header="Δt₄mini,°C" Binding="{Binding dt4mini, StringFormat=N2}" Width="85"/>
+                <DataGridTextColumn Header="T₄cpi, K" Binding="{Binding T4cpi, StringFormat=N2}" Width="80"/>
+                <DataGridTextColumn Header="T̅₄cpi" Binding="{Binding T_4cpi, StringFormat=N3}" Width="70"/>
+                <DataGridTextColumn Header="Θcpi" Binding="{Binding Ocpi, StringFormat=N3}" Width="70"/>
+                <DataGridTextColumn Header="Θmaxi" Binding="{Binding Omaxi, StringFormat=N3}" Width="70"/>
+                <DataGridTextColumn Header="ΔΘi" Binding="{Binding dOi, StringFormat=N3}" Width="70"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Border Grid.Row="3" BorderBrush="Gray" BorderThickness="1" Padding="8" Margin="0,0,0,8">
+            <StackPanel>
+                <TextBlock Text="Средние значения" FontWeight="Bold" Margin="0,0,0,5"/>
+                <WrapPanel>
+                    <TextBlock Text="t₄cp:" Margin="0,0,5,0"/>
+                    <TextBlock Text="{Binding ThermalResult.t4cp, StringFormat=N2}" Width="60"/>
+                    <TextBlock Text="°C" Margin="0,0,15,0"/>
+                    <TextBlock Text="T₄cp:" Margin="0,0,5,0"/>
+                    <TextBlock Text="{Binding ThermalResult.T4cp, StringFormat=N2}" Width="60"/>
+                    <TextBlock Text="K"/>
+                </WrapPanel>
+                <WrapPanel Margin="0,5,0,0">
+                    <TextBlock Text="Номер изделия:" Margin="0,0,5,0"/>
+                    <TextBlock Text="{Binding ThermalResult.ProductNumber}" Width="120"/>
+                    <TextBlock Text="ρ газа:" Margin="15,0,5,0"/>
+                    <TextBlock Text="{Binding ThermalResult.GasDensity, StringFormat=N3}" Width="60"/>
+                    <TextBlock Text="кг/м³" Margin="0,0,15,0"/>
+                    <TextBlock Text="L0:" Margin="0,0,5,0"/>
+                    <TextBlock Text="{Binding ThermalResult.StoichiometricRatio, StringFormat=N5}" Width="80"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+
+        <oxy:PlotView Grid.Row="4" Model="{Binding PlotModel}" Margin="0,0,0,0"/>
+    </Grid>
+</Window>
